@@ -9,27 +9,43 @@ const CartItem = ({ onContinueShopping }) => {
 
   // Calculate total amount for all products in the cart
   const calculateTotalAmount = () => {
+    let totalAmount = 0;
+    cart.forEach(item => {
+      const cost = parseFloat(item.cost.substring(1))
+      totalAmount += cost * item.quantity
+    });
 
+    return totalAmount;
   };
 
-  const handleContinueShopping = (e) => {
-
+  const handleContinueShopping = e => {
+    onContinueShopping(e)
   };
 
+  const handleCheckoutShopping = e => {
+    // TODO: implement this functionality
+    alert('Functionality to be added for future reference');
+  }
 
-
-  const handleIncrement = (item) => {
+  const handleIncrement = item => {
+    dispatch(updateQuantity({ name: item.name, quantity: item.quantity + 1 }))
   };
 
-  const handleDecrement = (item) => {
-
+  const handleDecrement = item => {
+    if (item.quantity > 1)
+      dispatch(updateQuantity({ name: item.name, quantity: item.quantity - 1 }))
+    else
+      handleRemove(item)
   };
 
-  const handleRemove = (item) => {
+  const handleRemove = item => {
+    dispatch(removeItem(item))
   };
 
   // Calculate total cost based on quantity for an item
-  const calculateTotalCost = (item) => {
+  const calculateTotalCost = item => {
+    const cost = parseFloat(item.cost.substring(1))
+    return cost * item.quantity
   };
 
   return (
@@ -43,9 +59,21 @@ const CartItem = ({ onContinueShopping }) => {
               <div className="cart-item-name">{item.name}</div>
               <div className="cart-item-cost">{item.cost}</div>
               <div className="cart-item-quantity">
-                <button className="cart-item-button cart-item-button-dec" onClick={() => handleDecrement(item)}>-</button>
+                <button
+                  className="cart-item-button cart-item-button-dec"
+                  onClick={() => handleDecrement(item)}
+                  disabled={item.quantity === 0}>
+                  -
+                </button>
+
                 <span className="cart-item-quantity-value">{item.quantity}</span>
-                <button className="cart-item-button cart-item-button-inc" onClick={() => handleIncrement(item)}>+</button>
+
+                <button
+                  className="cart-item-button cart-item-button-inc"
+                  onClick={() => handleIncrement(item)}
+                  disabled={item.quantity === 30}>
+                  +
+                </button>
               </div>
               <div className="cart-item-total">Total: ${calculateTotalCost(item)}</div>
               <button className="cart-item-delete" onClick={() => handleRemove(item)}>Delete</button>

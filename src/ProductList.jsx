@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 
 import './ProductList.css'
 import CartItem from './CartItem';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from './CartSlice';
 
 function ProductList({ onHomeClick }) {
     const dispatch = useDispatch()
+    const cart = useSelector(state => state.cart.items)
     const [showCart, setShowCart] = useState(false);
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
     const [addedToCart, setAddedToCart] = useState({})
@@ -306,7 +307,12 @@ function ProductList({ onHomeClick }) {
                                                 <div className='product-description'>{plant.description}</div>
                                                 <div className='product-cost'>{plant.cost}</div>
 
-                                                <button className='product-button' onClick={() => handleAddToCart(plant)}>Add to Cart</button>
+                                                <button
+                                                    className={`product-button ${addedToCart[plant.name] ? "added-to-cart" : ""}`}
+                                                    onClick={() => handleAddToCart(plant)}
+                                                    disabled={addedToCart[plant.name]}>
+                                                    {!addedToCart[plant.name] ? "Add to Cart" : "Added to Cart"}
+                                                </button>
                                             </div>
                                         ))
                                     }
@@ -317,8 +323,9 @@ function ProductList({ onHomeClick }) {
                 </div>
             ) : (
                 <CartItem onContinueShopping={handleContinueShopping} />
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 }
 
